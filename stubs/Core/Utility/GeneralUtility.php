@@ -67,9 +67,27 @@ class GeneralUtility
         return 'foo';
     }
 
-    public static function trimExplode($delim, $string, $removeEmptyValues = false, $limit = 0): string
+    public static function trimExplode($delim, $string, $removeEmptyValues = false, $limit = 0): array
     {
-        return 'foo';
+        $result = explode($delim, $string);
+        if ($removeEmptyValues) {
+            $temp = [];
+            foreach ($result as $value) {
+                if (trim($value) !== '') {
+                    $temp[] = $value;
+                }
+            }
+            $result = $temp;
+        }
+        if ($limit > 0 && count($result) > $limit) {
+            $lastElements = array_splice($result, $limit - 1);
+            $result[] = implode($delim, $lastElements);
+        } elseif ($limit < 0) {
+            $result = array_slice($result, 0, $limit);
+        }
+        $result = array_map('trim', $result);
+
+        return $result;
     }
 
     public static function idnaEncode($value): string
@@ -107,7 +125,7 @@ class GeneralUtility
         return 1;
     }
 
-    public function verifyFilenameAgainstDenyPattern($filename): void
+    public static function verifyFilenameAgainstDenyPattern($filename): void
     {
 
     }
